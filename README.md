@@ -1,70 +1,202 @@
-# Getting Started with Create React App
+# Cloud Drive - Almacenamiento en la Nube Personal
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Cloud Drive es una aplicación web que permite a los usuarios almacenar, organizar y compartir archivos en la nube de manera segura y eficiente. Desarrollada con React y Firebase, ofrece una experiencia intuitiva para gestionar archivos personales desde cualquier dispositivo.
 
-## Available Scripts
+![Cloud Drive Screenshot](https://via.placeholder.com/800x450.png?text=Cloud+Drive+Screenshot)
 
-In the project directory, you can run:
+## Características Principales
 
-### `npm start`
+- **Autenticación Segura**: Sistema de registro e inicio de sesión con Firebase Authentication.
+- **Almacenamiento de Archivos**: Sube y descarga archivos de cualquier tipo y tamaño.
+- **Organización por Carpetas**: Crea y gestiona carpetas para mantener tus archivos organizados.
+- **Compartir Archivos**: Comparte archivos con otros usuarios mediante correo electrónico.
+- **Búsqueda y Filtrado**: Encuentra rápidamente tus archivos con búsqueda por nombre y filtros por tipo.
+- **Ordenamiento Personalizado**: Ordena tus archivos por nombre, tamaño, tipo o fecha de subida.
+- **Interfaz Responsiva**: Diseño adaptable a diferentes dispositivos y tamaños de pantalla.
+- **Persistencia de Datos**: Acceso offline a la información previamente cargada.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Tecnologías Utilizadas
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Frontend**: React.js, CSS3, HTML5
+- **Backend**: Firebase (Authentication, Firestore, Storage, Realtime Database)
+- **Herramientas de Desarrollo**: Create React App, npm
 
-### `npm test`
+## Instalación y Configuración
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Requisitos Previos
 
-### `npm run build`
+- Node.js (v14.0.0 o superior)
+- npm (v6.0.0 o superior)
+- Cuenta en Firebase
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Pasos de Instalación
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. **Clonar el repositorio**:
+   ```bash
+   git clone https://github.com/tu-usuario/cloud-drive.git
+   cd cloud-drive
+   ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. **Instalar dependencias**:
+   ```bash
+   npm install
+   ```
 
-### `npm run eject`
+3. **Configurar Firebase**:
+   - Crea un proyecto en [Firebase Console](https://console.firebase.google.com/)
+   - Habilita Authentication, Firestore, Storage y Realtime Database
+   - Configura las reglas de seguridad para cada servicio
+   - Copia las credenciales de configuración
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4. **Configurar variables de entorno**:
+   - Crea un archivo `.env.local` en la raíz del proyecto
+   - Añade las credenciales de Firebase:
+     ```
+     REACT_APP_FIREBASE_API_KEY=tu-api-key
+     REACT_APP_FIREBASE_AUTH_DOMAIN=tu-auth-domain
+     REACT_APP_FIREBASE_PROJECT_ID=tu-project-id
+     REACT_APP_FIREBASE_STORAGE_BUCKET=tu-storage-bucket
+     REACT_APP_FIREBASE_MESSAGING_SENDER_ID=tu-messaging-sender-id
+     REACT_APP_FIREBASE_APP_ID=tu-app-id
+     REACT_APP_FIREBASE_DATABASE_URL=tu-database-url
+     ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+5. **Iniciar la aplicación en modo desarrollo**:
+   ```bash
+   npm start
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Estructura del Proyecto
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+```
+cloud-drive/
+├── public/                  # Archivos públicos
+├── src/                     # Código fuente
+│   ├── components/          # Componentes React
+│   │   ├── Auth.js          # Componente de autenticación
+│   │   ├── CreateFolderForm.js # Formulario para crear carpetas
+│   │   ├── Drive.js         # Componente principal de la aplicación
+│   │   ├── FileList.js      # Lista de archivos
+│   │   ├── FolderList.js    # Lista de carpetas
+│   │   ├── SearchAndFilter.js # Barra de búsqueda y filtros
+│   │   ├── ShareModal.js    # Modal para compartir archivos
+│   │   └── UploadForm.js    # Formulario para subir archivos
+│   ├── constants/           # Constantes de la aplicación
+│   ├── hooks/               # Hooks personalizados
+│   │   ├── useFiles.js      # Hook para gestionar archivos
+│   │   └── useFolders.js    # Hook para gestionar carpetas
+│   ├── services/            # Servicios de la aplicación
+│   │   ├── fileService.js   # Servicio para gestionar archivos
+│   │   ├── folderService.js # Servicio para gestionar carpetas
+│   │   └── shareService.js  # Servicio para compartir archivos
+│   ├── utils/               # Utilidades
+│   │   └── fileUtils.js     # Utilidades para archivos
+│   ├── App.js               # Componente raíz
+│   ├── App.css              # Estilos globales
+│   ├── Drive.css            # Estilos del componente Drive
+│   ├── Auth.css             # Estilos del componente Auth
+│   ├── firebase.js          # Configuración de Firebase
+│   └── index.js             # Punto de entrada
+├── .env.local               # Variables de entorno (no incluido en el repositorio)
+├── .gitignore               # Archivos ignorados por Git
+├── package.json             # Dependencias y scripts
+└── README.md                # Documentación
+```
 
-## Learn More
+## Guía de Uso
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Registro e Inicio de Sesión
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Accede a la aplicación y serás dirigido a la pantalla de autenticación.
+2. Para registrarte, haz clic en la pestaña "Registrarse" y completa el formulario con tu correo electrónico, nombre, teléfono (opcional) y contraseña.
+3. Para iniciar sesión, introduce tu correo electrónico y contraseña.
 
-### Code Splitting
+### Gestión de Archivos
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+1. **Subir archivos**:
+   - Selecciona una carpeta o la raíz donde deseas subir el archivo.
+   - Haz clic en "Seleccionar archivo" y elige el archivo de tu dispositivo.
+   - Haz clic en "Subir" para iniciar la carga.
 
-### Analyzing the Bundle Size
+2. **Descargar archivos**:
+   - Haz clic en el botón "Descargar" junto al archivo que deseas obtener.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+3. **Eliminar archivos**:
+   - Haz clic en el botón "Eliminar" junto al archivo que deseas borrar.
+   - Confirma la acción cuando se te solicite.
 
-### Making a Progressive Web App
+### Organización en Carpetas
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+1. **Crear carpetas**:
+   - En la sección "Crear carpeta", introduce el nombre de la nueva carpeta.
+   - Haz clic en "Crear" para añadir la carpeta.
 
-### Advanced Configuration
+2. **Navegar entre carpetas**:
+   - Haz clic en el nombre de una carpeta en la lista para ver su contenido.
+   - Haz clic en "Raíz" para volver al nivel principal.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+3. **Eliminar carpetas**:
+   - Haz clic en el icono de papelera junto al nombre de la carpeta.
+   - Confirma la acción cuando se te solicite.
 
-### Deployment
+### Compartir Archivos
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+1. Haz clic en el botón "Compartir" junto al archivo que deseas compartir.
+2. Introduce el correo electrónico del destinatario.
+3. Selecciona el nivel de permiso (solo lectura o edición).
+4. Haz clic en "Compartir" para enviar el acceso.
 
-### `npm run build` fails to minify
+### Búsqueda y Filtrado
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+1. **Buscar archivos**:
+   - Utiliza la barra de búsqueda para encontrar archivos por nombre.
+   - Los resultados se actualizan automáticamente mientras escribes.
+
+2. **Filtrar por tipo**:
+   - Selecciona un tipo de archivo en el menú desplegable "Filtrar por".
+   - Puedes elegir entre imágenes, documentos, videos, audios, etc.
+
+3. **Ordenar archivos**:
+   - Selecciona un criterio de ordenamiento en el menú "Ordenar por".
+   - Cambia entre orden ascendente y descendente con el botón correspondiente.
+
+## Seguridad
+
+Cloud Drive implementa varias capas de seguridad:
+
+- **Autenticación**: Verificación de usuarios mediante Firebase Authentication.
+- **Reglas de Firestore**: Control de acceso a nivel de documento para proteger los datos.
+- **Reglas de Storage**: Restricciones para la subida y descarga de archivos.
+- **Permisos de Compartición**: Control granular sobre quién puede acceder a los archivos compartidos.
+
+## Limitaciones y Consideraciones
+
+- El tamaño máximo de archivo depende de la configuración de Firebase Storage.
+- La aplicación requiere conexión a internet para la mayoría de las operaciones, aunque algunas funciones están disponibles offline.
+- La versión gratuita de Firebase tiene límites en cuanto a almacenamiento y transferencia de datos.
+
+## Contribución
+
+Las contribuciones son bienvenidas. Para contribuir:
+
+1. Haz un fork del repositorio
+2. Crea una rama para tu característica (`git checkout -b feature/amazing-feature`)
+3. Haz commit de tus cambios (`git commit -m 'Add some amazing feature'`)
+4. Haz push a la rama (`git push origin feature/amazing-feature`)
+5. Abre un Pull Request
+
+## Licencia
+
+Este proyecto está licenciado bajo la Licencia MIT - ver el archivo [LICENSE](LICENSE) para más detalles.
+
+## Contacto
+
+Si tienes preguntas o sugerencias, no dudes en contactarnos:
+
+- Email: [tu-email@ejemplo.com](mailto:tu-email@ejemplo.com)
+- GitHub: [tu-usuario](https://github.com/tu-usuario)
+
+---
+
+Desarrollado con ❤️ usando React y Firebase.
+
