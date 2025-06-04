@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "./firebase";
 import { useFiles, useSharedWithMe } from "./hooks/useFiles";
@@ -14,6 +14,7 @@ import UploadForm from "./components/UploadForm";
 import CreateFolderForm from "./components/CreateFolderForm";
 import ShareModal from "./components/ShareModal";
 import SearchAndFilter from "./components/SearchAndFilter";
+import FileViewer from "./components/FileViewer"; // Importar el nuevo componente
 
 import "./styles/Drive.css";
 
@@ -204,12 +205,49 @@ function Drive({ user, userData }) {
     setSelectedFileForShare(null);
     setShowShareModal(false);
   };
-  
+
+  // Añadir un estado para controlar la visibilidad del sidebar en móviles
+  const [showSidebar, setShowSidebar] = useState(window.innerWidth > 992);
+
+  // Añadir un efecto para manejar el cambio de tamaño de ventana
+  useEffect(() => {
+    const handleResize = () => {
+      setShowSidebar(window.innerWidth > 992);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Nuevo estado para el visor de archivos
+  const [selectedFileForView, setSelectedFileForView] = useState(null);
+
+  // Función para abrir el visor de archivos
+  const openFileViewer = (file) => {
+    setSelectedFileForView(file);
+  };
+
+  // Función para cerrar el visor de archivos
+  const closeFileViewer = () => {
+    setSelectedFileForView(null);
+  };
+
   return (
     <div className="drive-container">
       <header className="drive-header">
         <h1>Bienvenido, {displayName}</h1>
-        <button className="btn logout-btn" onClick={handleLogout}>Cerrar sesión</button>
+        <div className="header-actions">
+          {window.innerWidth <= 992 && (
+            <button 
+              className="toggle-sidebar-btn"
+              onClick={() => setShowSidebar(!showSidebar)}
+              aria-label={showSidebar ? "Ocultar carpetas" : "Mostrar carpetas"}
+            >
+              {showSidebar ? "◀ Ocultar" : "▶ Carpetas"}
+            </button>
+          )}
+          <button className="btn logout-btn" onClick={handleLogout}>Cerrar sesión</button>
+        </div>
       </header>
 
       <div className="view-toggle">
@@ -229,25 +267,27 @@ function Drive({ user, userData }) {
       
       {viewMode === "my-files" && (
         <div className="drive-content">
-          <div className="sidebar">
-            <h3>Carpetas</h3>
-            <FolderList 
-              folders={folders}
-              selectedFolderId={selectedFolderId}
-              onSelectFolder={setSelectedFolderId}
-              onDeleteFolder={handleDeleteFolder}
-              loading={loadingFolders}
-              error={foldersError}
-            />
-            
-            <div className="create-folder-section">
-              <h3>Crear carpeta</h3>
-              <CreateFolderForm 
-                onCreateFolder={handleCreateFolder}
-                isCreating={isCreatingFolder}
+          {(showSidebar || window.innerWidth > 992) && (
+            <div className="sidebar">
+              <h3>Carpetas</h3>
+              <FolderList 
+                folders={folders}
+                selectedFolderId={selectedFolderId}
+                onSelectFolder={setSelectedFolderId}
+                onDeleteFolder={handleDeleteFolder}
+                loading={loadingFolders}
+                error={foldersError}
               />
+              
+              <div className="create-folder-section">
+                <h3>Crear carpeta</h3>
+                <CreateFolderForm 
+                  onCreateFolder={handleCreateFolder}
+                  isCreating={isCreatingFolder}
+                />
+              </div>
             </div>
-          </div>
+          )}
           
           <div className="main-content">
             <h2>
@@ -283,6 +323,7 @@ function Drive({ user, userData }) {
                 files={filteredAndSortedFiles}
                 onDelete={handleDeleteFile}
                 onShare={openShareModal}
+                onView={openFileViewer} // Añadir el manejador para ver archivos
                 loading={loadingFiles}
                 error={filesError}
                 emptyMessage={
@@ -316,6 +357,7 @@ function Drive({ user, userData }) {
           <FileList 
             files={filteredAndSortedSharedFiles}
             onDelete={handleDeleteFile}
+            onView={openFileViewer} // Añadir el manejador para ver archivos
             loading={loadingShared}
             error={sharedError}
             emptyMessage={
@@ -327,11 +369,20 @@ function Drive({ user, userData }) {
         </div>
       )}
       
+      {/* Modal para compartir archivos */}
       {showShareModal && (
         <ShareModal 
           file={selectedFileForShare}
           onShare={handleShareFile}
           onClose={closeShareModal}
+        />
+      )}
+      
+      {/* Visor de archivos */}
+      {selectedFileForView && (
+        <FileViewer 
+          file={selectedFileForView}
+          onClose={closeFileViewer}
         />
       )}
     </div>

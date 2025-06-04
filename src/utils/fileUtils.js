@@ -1,4 +1,4 @@
-// Función para formatear el tamaño de archivo
+// Función para formatear el tamaño del archivo
 export const formatFileSize = (bytes) => {
   if (bytes === 0) return '0 Bytes';
   
@@ -9,26 +9,76 @@ export const formatFileSize = (bytes) => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 };
 
-// Función para obtener la extensión de un archivo
-export const getFileExtension = (filename) => {
-  return filename.slice((filename.lastIndexOf(".") - 1 >>> 0) + 2);
+// Función para determinar el tipo de archivo basado en la extensión
+export const getFileTypeFromExtension = (extension) => {
+  if (!extension) return 'Otro';
+  
+  // Convertir a minúsculas para comparación
+  const ext = extension.toLowerCase();
+  
+  // Imágenes
+  if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'].includes(ext)) {
+    return 'Imagen';
+  }
+  
+  // Documentos
+  if (['doc', 'docx', 'pdf', 'txt', 'rtf', 'odt', 'xls', 'xlsx', 'ppt', 'pptx'].includes(ext)) {
+    return 'Documento';
+  }
+  
+  // Videos
+  if (['mp4', 'webm', 'mov', 'avi', 'mkv', 'flv', 'wmv'].includes(ext)) {
+    return 'Video';
+  }
+  
+  // Audio
+  if (['mp3', 'wav', 'ogg', 'aac', 'flac', 'm4a'].includes(ext)) {
+    return 'Audio';
+  }
+  
+  // Archivos comprimidos
+  if (['zip', 'rar', '7z', 'tar', 'gz'].includes(ext)) {
+    return 'Archivo comprimido';
+  }
+  
+  // Código
+  if (['js', 'html', 'css', 'py', 'java', 'c', 'cpp', 'php', 'rb', 'go', 'ts'].includes(ext)) {
+    return 'Código';
+  }
+  
+  // Otros tipos
+  return 'Otro';
 };
 
-// Función para determinar el tipo de archivo
-export const getFileType = (filename) => {
-  const ext = getFileExtension(filename).toLowerCase();
+// Función para obtener el tipo de archivo a partir del nombre
+export const getFileTypeFromName = (fileName) => {
+  if (!fileName) return 'Otro';
   
-  const imageTypes = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
-  const documentTypes = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'];
-  const videoTypes = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm'];
-  const audioTypes = ['mp3', 'wav', 'ogg', 'flac', 'aac'];
+  const parts = fileName.split('.');
+  if (parts.length <= 1) return 'Otro';
   
-  if (imageTypes.includes(ext)) return 'image';
-  if (documentTypes.includes(ext)) return 'document';
-  if (videoTypes.includes(ext)) return 'video';
-  if (audioTypes.includes(ext)) return 'audio';
-  
-  return 'other';
+  const extension = parts.pop().toLowerCase();
+  return getFileTypeFromExtension(extension);
+};
+
+// Función para obtener el icono según el tipo de archivo
+export const getFileIcon = (fileType) => {
+  switch (fileType) {
+    case 'Imagen':
+      return '🖼️';
+    case 'Documento':
+      return '📄';
+    case 'Video':
+      return '🎬';
+    case 'Audio':
+      return '🎵';
+    case 'Archivo comprimido':
+      return '🗜️';
+    case 'Código':
+      return '📝';
+    default:
+      return '📁';
+  }
 };
 
 // Función para generar un nombre de copia
@@ -44,5 +94,6 @@ export const generateCopyName = (existingNames, originalName) => {
   
   return newName;
 };
+
 
 

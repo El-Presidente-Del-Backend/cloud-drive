@@ -12,12 +12,12 @@ const SearchAndFilter = ({
 }) => {
   // Opciones de filtro por tipo
   const filterOptions = [
-    { value: "all", label: "Todos los archivos" },
+    { value: "all", label: "Todos" },
     { value: "Imagen", label: "Imágenes" },
     { value: "Documento", label: "Documentos" },
     { value: "Video", label: "Videos" },
     { value: "Audio", label: "Audios" },
-    { value: "Archivo comprimido", label: "Archivos comprimidos" },
+    { value: "Archivo comprimido", label: "Comprimidos" },
     { value: "Otro", label: "Otros" }
   ];
 
@@ -25,7 +25,7 @@ const SearchAndFilter = ({
   const sortOptions = [
     { value: "name", label: "Nombre" },
     { value: "size", label: "Tamaño" },
-    { value: "createdAt", label: "Fecha de subida" },
+    { value: "createdAt", label: "Fecha" },
     { value: "type", label: "Tipo" }
   ];
 
@@ -43,6 +43,7 @@ const SearchAndFilter = ({
           className="clear-search-btn"
           onClick={() => setSearchTerm("")}
           style={{ visibility: searchTerm ? "visible" : "hidden" }}
+          aria-label="Limpiar búsqueda"
         >
           ✕
         </button>
@@ -50,7 +51,7 @@ const SearchAndFilter = ({
       
       <div className="filter-options">
         <div className="filter-group">
-          <label htmlFor="filter-type">Filtrar por:</label>
+          <label htmlFor="filter-type">Filtrar:</label>
           <select
             id="filter-type"
             value={filterType}
@@ -66,7 +67,7 @@ const SearchAndFilter = ({
         </div>
         
         <div className="filter-group">
-          <label htmlFor="sort-by">Ordenar por:</label>
+          <label htmlFor="sort-by">Ordenar:</label>
           <select
             id="sort-by"
             value={sortBy}
@@ -85,8 +86,9 @@ const SearchAndFilter = ({
           <button
             className="sort-direction-btn"
             onClick={() => setSortDirection(sortDirection === "asc" ? "desc" : "asc")}
+            aria-label={sortDirection === "asc" ? "Ordenar descendente" : "Ordenar ascendente"}
           >
-            {sortDirection === "asc" ? "↑ Ascendente" : "↓ Descendente"}
+            {sortDirection === "asc" ? "↑" : "↓"}
           </button>
         </div>
       </div>

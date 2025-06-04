@@ -1,10 +1,11 @@
 import React from "react";
-import { formatFileSize } from "../utils/fileUtils";
+import { formatFileSize, getFileIcon } from "../utils/fileUtils";
 
 const FileList = ({ 
   files, 
   onDelete, 
   onShare, 
+  onView,
   loading, 
   error, 
   emptyMessage = "No hay archivos en esta ubicación" 
@@ -37,61 +38,87 @@ const FileList = ({
 
   return (
     <ul className="files-list">
-      {files.map(file => (
-        <li key={file.id} className={`file-item ${file.isShared ? 'shared' : ''}`}>
-          <div className="file-info">
-            {file.isShared ? (
-              <>
-                <span className="file-name">{file.fileName}</span>
-                <span className="file-owner">
-                  Compartido por: {file.ownerName || file.ownerEmail}
-                </span>
-                <span className="file-permission">
-                  Permiso: {file.permission === "view" ? "Solo lectura" : "Editar"}
-                </span>
-              </>
-            ) : (
-              <>
-                <span className="file-name">{file.name}</span>
-                <div className="file-details">
-                  <span className="file-type">{file.type || "Archivo"}</span>
-                  <span className="file-size">{formatFileSize(file.size || 0)}</span>
-                  <span className="file-date">
-                    Subido: {formatDate(file.createdAt)}
+      {files.map(file => {
+        const fileType = file.type || "Otro";
+        const fileIcon = getFileIcon(fileType);
+        
+        return (
+          <li key={file.id} className={`file-item ${file.isShared ? 'shared' : ''}`}>
+            <div className="file-info">
+              <span className="file-icon">{fileIcon}</span>
+              {file.isShared ? (
+                <>
+                  <span 
+                    className="file-name clickable" 
+                    onClick={() => onView(file)}
+                  >
+                    {file.fileName}
                   </span>
-                </div>
-              </>
-            )}
-          </div>
-          
-          <div className="file-actions">
-            <a 
-              href={file.isShared ? file.fileUrl : file.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="download-link"
-            >
-              Descargar
-            </a>
+                  <span className="file-owner">
+                    Compartido por: {file.ownerName || file.ownerEmail}
+                  </span>
+                  <span className="file-permission">
+                    Permiso: {file.permission === "view" ? "Solo lectura" : "Editar"}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span 
+                    className="file-name clickable" 
+                    onClick={() => onView(file)}
+                  >
+                    {file.name}
+                  </span>
+                  <div className="file-details">
+                    <span className="file-type">{fileType}</span>
+                    <span className="file-size">{formatFileSize(file.size || 0)}</span>
+                    <span className="file-date">
+                      Subido: {formatDate(file.createdAt)}
+                    </span>
+                  </div>
+                </>
+              )}
+            </div>
             
-            {!file.isShared && (
+            <div className="file-actions">
               <button 
-                className="share-btn" 
-                onClick={() => onShare(file)}
+                className="view-btn" 
+                onClick={() => onView(file)}
+                title="Ver archivo"
               >
-                Compartir
+                👁️
               </button>
-            )}
-            
-            <button 
-              className="delete-btn" 
-              onClick={() => onDelete(file)}
-            >
-              {file.isShared ? "Eliminar acceso" : "Eliminar"}
-            </button>
-          </div>
-        </li>
-      ))}
+              
+              <a 
+                href={file.isShared ? file.fileUrl : file.url} 
+                download={file.isShared ? file.fileName : file.name}
+                className="download-btn"
+                title="Descargar archivo"
+              >
+                ⬇️
+              </a>
+              
+              {!file.isShared && (
+                <button 
+                  className="share-btn" 
+                  onClick={() => onShare(file)}
+                  title="Compartir archivo"
+                >
+                  🔗
+                </button>
+              )}
+              
+              <button 
+                className="delete-btn" 
+                onClick={() => onDelete(file)}
+                title={file.isShared ? "Eliminar acceso" : "Eliminar archivo"}
+              >
+                🗑️
+              </button>
+            </div>
+          </li>
+        );
+      })}
     </ul>
   );
 };

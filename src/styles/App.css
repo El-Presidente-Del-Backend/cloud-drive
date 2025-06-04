@@ -14,3 +14,22 @@ body {
   min-height: 100vh;
 }
 
+/* Media queries globales */
+@media (max-width: 768px) {
+  .loading-container {
+    padding: 10px;
+  }
+  
+  .loading-spinner {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 14px;
+  }
+}
+
+

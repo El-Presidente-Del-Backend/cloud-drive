@@ -12,10 +12,10 @@ import {
   query,
   where,
   addDoc,
-  serverTimestamp,
-  setDoc
+  serverTimestamp
 } from "firebase/firestore";
 import { storage, db } from "../firebase";
+import { getFileTypeFromName } from "../utils/fileUtils";
 
 // Función para subir un archivo
 export const uploadFile = async (file, user, selectedFolderId) => {
@@ -57,7 +57,7 @@ export const uploadFile = async (file, user, selectedFolderId) => {
   const fileExtension = finalName.split('.').pop().toLowerCase();
   
   // Determinar el tipo de archivo
-  const fileType = getFileTypeFromExtension(fileExtension);
+  const fileType = getFileTypeFromName(finalName);
 
   const fileData = {
     name: finalName,
@@ -66,9 +66,9 @@ export const uploadFile = async (file, user, selectedFolderId) => {
     createdAt: serverTimestamp(),
     ownerId: user.uid,
     ownerEmail: user.email,
-    size: file.size, // Guardar el tamaño del archivo en bytes
-    type: fileType, // Guardar el tipo de archivo
-    extension: fileExtension // Guardar la extensión
+    size: file.size,
+    type: fileType,
+    extension: fileExtension
   };
 
   const docRef = await addDoc(filesRef, fileData);
@@ -120,31 +120,19 @@ export const deleteFile = async (file, user) => {
   }
 };
 
-// Función auxiliar para generar nombres de copia
-export const generateCopyName = (existingNames, originalName) => {
-  const [base, ext] = originalName.split(/\.(?=[^\.]+$)/); 
-  let counter = 2;
-  let newName = `${base} (${counter}).${ext}`;
+// Función para generar un nombre único para copias
+const generateCopyName = (existingNames, originalName) => {
+  const nameParts = originalName.split('.');
+  const extension = nameParts.pop();
+  const baseName = nameParts.join('.');
+  
+  let copyNum = 1;
+  let newName = `${baseName} (copia).${extension}`;
+  
   while (existingNames.includes(newName)) {
-    counter++;
-    newName = `${base} (${counter}).${ext}`;
+    copyNum++;
+    newName = `${baseName} (copia ${copyNum}).${extension}`;
   }
+  
   return newName;
-};
-
-// Función para determinar el tipo de archivo basado en la extensión
-const getFileTypeFromExtension = (extension) => {
-  const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'svg'];
-  const documentExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'];
-  const videoExtensions = ['mp4', 'avi', 'mov', 'wmv', 'flv', 'mkv', 'webm'];
-  const audioExtensions = ['mp3', 'wav', 'ogg', 'flac', 'aac'];
-  const compressedExtensions = ['zip', 'rar', '7z', 'tar', 'gz'];
-  
-  if (imageExtensions.includes(extension)) return 'Imagen';
-  if (documentExtensions.includes(extension)) return 'Documento';
-  if (videoExtensions.includes(extension)) return 'Video';
-  if (audioExtensions.includes(extension)) return 'Audio';
-  if (compressedExtensions.includes(extension)) return 'Archivo comprimido';
-  
-  return 'Otro';
 };

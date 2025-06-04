@@ -178,55 +178,54 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  margin-bottom: 8px;
-  background-color: #fff;
+  padding: 12px 15px;
+  border-bottom: 1px solid #e0e0e0;
+  transition: background-color 0.2s;
+}
+
+.file-item:hover {
+  background-color: #f5f5f5;
+}
+
+.file-item.shared {
+  background-color: #e8f0fe;
+}
+
+.file-item.shared:hover {
+  background-color: #d2e3fc;
 }
 
 .file-info {
-  flex: 1;
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-width: 0; /* Para que funcione text-overflow */
+}
+
+.file-icon {
+  font-size: 20px;
+  margin-right: 10px;
+  display: inline-block;
 }
 
 .file-name {
-  font-weight: bold;
+  font-weight: 500;
   margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .file-details {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  font-size: 0.85rem;
+  font-size: 12px;
   color: #666;
-  margin-top: 4px;
-}
-
-.file-type, .file-size, .file-date {
-  display: inline-flex;
-  align-items: center;
-}
-
-.file-type::before {
-  content: "📄";
-  margin-right: 4px;
-}
-
-.file-size::before {
-  content: "📊";
-  margin-right: 4px;
-}
-
-.file-date::before {
-  content: "📅";
-  margin-right: 4px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .file-owner, .file-permission {
-  font-size: 0.85rem;
+  font-size: 12px;
   color: #666;
   margin-top: 2px;
 }
@@ -236,18 +235,43 @@
   gap: 8px;
 }
 
-.download-link, .share-btn {
-  padding: 6px 12px;
-  background-color: #4285f4;
-  color: white;
+.view-btn, .share-btn, .delete-btn, .download-btn {
+  background: none;
   border: none;
-  border-radius: 4px;
+  font-size: 18px;
   cursor: pointer;
-  text-decoration: none;
+  padding: 5px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
-.share-btn {
-  background-color: #4caf50;
+.view-btn:hover, .share-btn:hover, .delete-btn:hover, .download-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.download-btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive para la lista de archivos */
+@media (max-width: 768px) {
+  .file-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .file-info {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .file-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
 }
 
 .modal-overlay {
@@ -402,20 +426,121 @@
   background-color: #e9e9e9;
 }
 
-/* Estilos responsivos */
+/* Añadir estilos para elementos clickables */
+.clickable {
+  cursor: pointer;
+  color: #1a73e8;
+}
+
+.clickable:hover {
+  text-decoration: underline;
+}
+
+.view-btn {
+  background-color: #4285f4;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 8px;
+}
+
+.view-btn:hover {
+  background-color: #3367d6;
+}
+
+/* Estilos responsivos mejorados */
+@media (max-width: 992px) {
+  .drive-container {
+    padding: 15px;
+  }
+  
+  .drive-content {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .main-content {
+    width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
+  .drive-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .drive-header h1 {
+    font-size: 1.5rem;
+  }
+  
+  .logout-btn {
+    align-self: flex-end;
+  }
+  
+  .file-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .file-list-item {
+    flex-direction: column;
+    padding: 10px;
+  }
+  
+  .file-info {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .file-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .view-toggle {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .toggle-btn {
+    width: 100%;
+    border-radius: 0;
+  }
+  
+  .toggle-btn:first-child {
+    border-radius: 4px 4px 0 0;
+  }
+  
+  .toggle-btn:last-child {
+    border-radius: 0 0 4px 4px;
+  }
+  
+  .file-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .search-filter-container {
+    padding: 10px;
+  }
+  
   .filter-options {
     flex-direction: column;
-    gap: 10px;
   }
   
   .filter-group {
     width: 100%;
-  }
-  
-  .sort-direction-btn {
-    margin-top: 0;
+    margin-bottom: 10px;
   }
 }
+
 
 
