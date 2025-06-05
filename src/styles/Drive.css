@@ -200,6 +200,18 @@
   flex-direction: column;
   flex: 1;
   min-width: 0; /* Para que funcione text-overflow */
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.file-info:hover .file-name {
+  color: #4285f4;
+  text-decoration: underline;
+}
+
+.file-name.clickable {
+  color: #333;
+  transition: color 0.2s, text-decoration 0.2s;
 }
 
 .file-icon {
@@ -542,5 +554,154 @@
   }
 }
 
+/* Estilos para el ícono de descarga animado */
+.download-icon {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.animate-arrow {
+  animation: bounce 1s infinite;
+}
 
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(2px);
+  }
+}
+
+/* Estilos para el botón de descarga en la lista de archivos */
+.download-btn {
+  background: none;
+  border: none;
+  padding: 5px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.download-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el ícono de enlace animado */
+.link-icon {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.animate-link-path {
+  animation: linkWiggle 1s infinite;
+}
+
+@keyframes linkWiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+/* Estilos para el botón de compartir en la lista de archivos */
+.share-btn {
+  background: none;
+  border: none;
+  padding: 5px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.share-btn:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el ícono de eliminar animado */
+.delete-icon {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.animate-lid {
+  animation: liftLid 0.5s ease-in-out;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+.animate-bin {
+  animation: shakeBin 0.5s ease-in-out;
+}
+
+.animate-line {
+  animation: moveLine 0.5s ease-in-out;
+}
+
+@keyframes liftLid {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+
+@keyframes shakeBin {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  25% {
+    transform: translateY(0.5px);
+  }
+  75% {
+    transform: translateY(0.5px);
+  }
+}
+
+@keyframes moveLine {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(0.5px);
+  }
+}
+
+/* Estilos para el botón de eliminar en la lista de archivos */
+.delete-btn {
+  background: none;
+  border: none;
+  padding: 5px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #f44336;
+}
+
+.delete-btn:hover {
+  background-color: rgba(244, 67, 54, 0.1);
+}

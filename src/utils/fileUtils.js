@@ -95,5 +95,35 @@ export const generateCopyName = (existingNames, originalName) => {
   return newName;
 };
 
+// Función para formatear fechas
+export const formatDate = (timestamp) => {
+  if (!timestamp) return 'Fecha desconocida';
+  
+  // Si es un objeto Timestamp de Firestore
+  if (timestamp.toDate && typeof timestamp.toDate === 'function') {
+    timestamp = timestamp.toDate();
+  }
+  
+  // Si es un string, convertirlo a Date
+  if (typeof timestamp === 'string') {
+    timestamp = new Date(timestamp);
+  }
+  
+  // Verificar si es una fecha válida
+  if (!(timestamp instanceof Date) || isNaN(timestamp)) {
+    return 'Fecha inválida';
+  }
+  
+  // Formatear la fecha
+  const options = { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  };
+  
+  return timestamp.toLocaleDateString('es-ES', options);
+};
 
 
