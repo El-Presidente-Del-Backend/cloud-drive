@@ -9,10 +9,12 @@ import {
   deleteDoc
 } from "firebase/firestore";
 import { db } from "../firebase";
+import { notify } from "../services/notificationService";
 
 // Función para compartir un archivo
 export const shareFile = async (file, targetEmail, permission, user, userData) => {
   if (!targetEmail || !file) {
+    notify.error("Se requiere un correo electrónico y un archivo para compartir");
     throw new Error("Se requiere un correo electrónico y un archivo para compartir");
   }
   

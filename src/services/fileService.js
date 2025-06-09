@@ -16,6 +16,15 @@ import {
 } from "firebase/firestore";
 import { storage, db } from "../firebase";
 import { getFileTypeFromName } from "../utils/fileUtils";
+import { notify } from "../services/notificationService";
+
+const SUCCESS_MESSAGES = {
+  DELETE: "Archivo eliminado con éxito"
+};
+
+const ERROR_MESSAGES = {
+  DELETE_FAILED: "Error al eliminar archivo"
+};
 
 // Función para subir un archivo
 export const uploadFile = async (file, user, selectedFolderId) => {
@@ -36,19 +45,44 @@ export const uploadFile = async (file, user, selectedFolderId) => {
   let finalName = file.name;
 
   if (existing) {
-    const overwrite = window.confirm(
-      `Ya existe un archivo llamado "${file.name}".\n¿Quieres sobrescribirlo? (Aceptar = sobrescribir, Cancelar = subir como copia)`
-    );
-
-    if (overwrite) {
-      await deleteObject(ref(storage, `files/${user.uid}/${existing.name}`));
-      await deleteDoc(doc(db, "users", user.uid, "files", existing.id));
-    } else {
-      const names = filesInFolder.map(f => f.name);
-      finalName = generateCopyName(names, file.name);
-    }
+    // Reemplazar window.confirm con una promesa que se resuelve cuando el usuario toma una decisión
+    return new Promise((resolve) => {
+      notify.confirm(
+        `Ya existe un archivo llamado "${file.name}".\n¿Quieres sobrescribirlo?`,
+        async () => {
+          // Usuario eligió sobrescribir
+          try {
+            await deleteObject(ref(storage, `files/${user.uid}/${existing.name}`));
+            await deleteDoc(doc(db, "users", user.uid, "files", existing.id));
+            
+            // Continuar con la subida
+            const result = await completeFileUpload(file, finalName, user, selectedFolderId);
+            resolve(result);
+          } catch (error) {
+            console.error("Error al sobrescribir archivo:", error);
+            notify.error("Error al sobrescribir archivo", error.message);
+            resolve(null);
+          }
+        },
+        async () => {
+          // Usuario eligió no sobrescribir (subir como copia)
+          const names = filesInFolder.map(f => f.name);
+          finalName = generateCopyName(names, file.name);
+          
+          // Continuar con la subida como copia
+          const result = await completeFileUpload(file, finalName, user, selectedFolderId);
+          resolve(result);
+        }
+      );
+    });
   }
 
+  // Si no hay duplicados, continuar con la subida normal
+  return await completeFileUpload(file, finalName, user, selectedFolderId);
+};
+
+// Función auxiliar para completar la subida del archivo
+const completeFileUpload = async (file, finalName, user, selectedFolderId) => {
   const fileRef = ref(storage, `files/${user.uid}/${finalName}`);
   const snap = await uploadBytes(fileRef, file);
   const url = await getDownloadURL(snap.ref);
@@ -71,6 +105,7 @@ export const uploadFile = async (file, user, selectedFolderId) => {
     extension: fileExtension
   };
 
+  const filesRef = collection(db, "users", user.uid, "files");
   const docRef = await addDoc(filesRef, fileData);
   
   return {
@@ -85,7 +120,7 @@ export const deleteFile = async (file, user) => {
     // Si es un archivo compartido conmigo, solo eliminar el permiso
     if (file.isShared) {
       await deleteDoc(doc(db, "users", user.uid, "sharedWithMe", file.id));
-      return "Archivo eliminado de tus archivos compartidos";
+      return SUCCESS_MESSAGES.DELETE;
     }
     
     // Si es mi archivo, eliminar el archivo
@@ -113,10 +148,11 @@ export const deleteFile = async (file, user) => {
     
     await Promise.all(deletePromises);
     
-    return "Archivo eliminado con éxito";
-  } catch (err) {
-    console.error("Error al eliminar archivo:", err);
-    throw new Error("Error al eliminar archivo: " + err.message);
+    return SUCCESS_MESSAGES.DELETE;
+  } catch (error) {
+    console.error("Error al eliminar archivo:", error);
+    notify.error(ERROR_MESSAGES.DELETE_FAILED, error.message);
+    throw error;
   }
 };
 
@@ -127,11 +163,11 @@ const generateCopyName = (existingNames, originalName) => {
   const baseName = nameParts.join('.');
   
   let copyNum = 1;
-  let newName = `${baseName} (copia).${extension}`;
+  let newName = `${baseName} (${copyNum}).${extension}`;
   
   while (existingNames.includes(newName)) {
     copyNum++;
-    newName = `${baseName} (copia ${copyNum}).${extension}`;
+    newName = `${baseName} (${copyNum}).${extension}`;
   }
   
   return newName;
