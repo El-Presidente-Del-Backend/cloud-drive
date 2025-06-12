@@ -11,12 +11,22 @@ import {
   getDoc
 } from "firebase/firestore";
 import { db } from "../firebase";
+<<<<<<< HEAD
 import { PERMISSION_TYPES, ERROR_MESSAGES } from "../constants/permissions";
 
 // Función para compartir un archivo
 export const shareFile = async (file, targetEmail, permission, user) => {
   if (!targetEmail || !file || !user) {
     throw new Error("Se requiere un correo electrónico, un archivo y un usuario para compartir");
+=======
+import { notify } from "../services/notificationService";
+
+// Función para compartir un archivo
+export const shareFile = async (file, targetEmail, permission, user, userData) => {
+  if (!targetEmail || !file) {
+    notify.error("Se requiere un correo electrónico y un archivo para compartir");
+    throw new Error("Se requiere un correo electrónico y un archivo para compartir");
+>>>>>>> b2ea820c6ebe1ab549bbe390e8f222ad128ef28c
   }
   
   try {
