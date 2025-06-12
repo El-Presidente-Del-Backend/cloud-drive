@@ -185,14 +185,23 @@ function Drive({ user, userData }) {
     }
   };
   
+  // Añadir un estado para controlar el estado de compartir
+  const [isSharing, setIsSharing] = useState(false);
+
   const handleShareFile = async (file, email, permission) => {
     try {
+      console.log("Iniciando compartir archivo:", file.id, "con:", email);
+      setIsSharing(true);
+      
       const result = await shareFile(file, email, permission, user);
       alert(result.message || SUCCESS_MESSAGES.SHARE);
       return result;
     } catch (error) {
       console.error("Error al compartir archivo:", error);
+      alert("Error al compartir archivo: " + error.message);
       throw error;
+    } finally {
+      setIsSharing(false);
     }
   };
   
@@ -375,6 +384,7 @@ function Drive({ user, userData }) {
           file={selectedFileForShare}
           onShare={handleShareFile}
           onClose={closeShareModal}
+          isSubmitting={isSharing}
         />
       )}
       
