@@ -7,7 +7,6 @@ import { uploadFile, deleteFile } from "./services/fileService";
 import { createFolder, deleteFolder } from "./services/folderService";
 import { shareFile } from "./services/shareService";
 import { SUCCESS_MESSAGES } from "./constants/permissions";
-import { notify } from "./services/notificationService";
 
 import FileList from "./components/FileList";
 import FolderList from "./components/FolderList";
@@ -134,10 +133,10 @@ function Drive({ user, userData }) {
     setIsUploading(true);
     try {
       await uploadFile(file, user, selectedFolderId);
-      notify.success(SUCCESS_MESSAGES.UPLOAD);
+      alert(SUCCESS_MESSAGES.UPLOAD);
     } catch (error) {
       console.error("Error al subir archivo:", error);
-      notify.error("Error al subir archivo", error.message);
+      alert("Error al subir archivo: " + error.message);
     } finally {
       setIsUploading(false);
     }
@@ -149,43 +148,41 @@ function Drive({ user, userData }) {
     setIsCreatingFolder(true);
     try {
       await createFolder(folderName, user);
-      notify.success(SUCCESS_MESSAGES.FOLDER_CREATE);
+      alert(SUCCESS_MESSAGES.FOLDER_CREATE);
     } catch (error) {
       console.error("Error al crear carpeta:", error);
-      notify.error("Error al crear carpeta", error.message);
+      alert("Error al crear carpeta: " + error.message);
     } finally {
       setIsCreatingFolder(false);
     }
   };
   
   const handleDeleteFile = async (file) => {
-    notify.confirm(
-      `¿Estás seguro de que quieres eliminar "${file.name || file.fileName}"?`,
-      async () => {
-        try {
-          const message = await deleteFile(file, user);
-          notify.success(message);
-        } catch (error) {
-          console.error("Error al eliminar archivo:", error);
-          notify.error("Error al eliminar archivo", error.message);
-        }
-      }
-    );
+    if (!window.confirm(`¿Estás seguro de que quieres eliminar "${file.name || file.fileName}"?`)) {
+      return;
+    }
+    
+    try {
+      const message = await deleteFile(file, user);
+      alert(message);
+    } catch (error) {
+      console.error("Error al eliminar archivo:", error);
+      alert("Error al eliminar archivo: " + error.message);
+    }
   };
   
   const handleDeleteFolder = async (folderId) => {
-    notify.confirm(
-      "¿Estás seguro de que quieres eliminar esta carpeta y todo su contenido?",
-      async () => {
-        try {
-          const message = await deleteFolder(folderId, user);
-          notify.success(message);
-        } catch (error) {
-          console.error("Error al eliminar carpeta:", error);
-          notify.error("Error al eliminar carpeta", error.message);
-        }
-      }
-    );
+    if (!window.confirm("¿Estás seguro de que quieres eliminar esta carpeta y todo su contenido?")) {
+      return;
+    }
+    
+    try {
+      const message = await deleteFolder(folderId, user);
+      alert(message);
+    } catch (error) {
+      console.error("Error al eliminar carpeta:", error);
+      alert("Error al eliminar carpeta: " + error.message);
+    }
   };
   
   // Añadir un estado para controlar el estado de compartir
@@ -197,15 +194,11 @@ function Drive({ user, userData }) {
       setIsSharing(true);
       
       const result = await shareFile(file, email, permission, user);
-      notify.success(result.message || SUCCESS_MESSAGES.SHARE);
+      alert(result.message || SUCCESS_MESSAGES.SHARE);
       return result;
     } catch (error) {
       console.error("Error al compartir archivo:", error);
-<<<<<<< HEAD
       alert("Error al compartir archivo: " + error.message);
-=======
-      notify.error("Error al compartir archivo", error.message);
->>>>>>> b2ea820c6ebe1ab549bbe390e8f222ad128ef28c
       throw error;
     } finally {
       setIsSharing(false);

@@ -10,7 +10,6 @@ import {
 } from "firebase/firestore";
 import { ref, deleteObject } from "firebase/storage";
 import { db, storage } from "../firebase";
-import { notify } from "../services/notificationService";
 
 // Función para crear una carpeta
 export const createFolder = async (folderName, user) => {
@@ -51,7 +50,6 @@ export const deleteFolder = async (folderId, user) => {
     return "Carpeta eliminada con éxito";
   } catch (error) {
     console.error("Error al eliminar carpeta:", error);
-    notify.error("Error al eliminar carpeta", error.message);
-    throw error;
+    throw new Error("Error al eliminar carpeta: " + error.message);
   }
 };

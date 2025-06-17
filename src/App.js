@@ -2,7 +2,6 @@ import { useState, useEffect, useTransition } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "./firebase";
 import { doc, getDoc } from "firebase/firestore";
-import { Toaster } from "sonner";
 import Auth from "./Auth";
 import Drive from "./Drive";
 import "./styles/App.css";
@@ -76,17 +75,6 @@ function App() {
   
   return (
     <div className="app">
-      <Toaster 
-        position="bottom-right"
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: "#fff",
-            color: "#202124",
-            border: "1px solid #e0e0e0",
-          },
-        }}
-      />
       {isPending ? (
         <div className="loading-container">
           <div className="loading-spinner"></div>

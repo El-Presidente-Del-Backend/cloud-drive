@@ -3,8 +3,7 @@ import { auth } from "./firebase";
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { db } from "./firebase";
-import "./styles/Auth.css";
-import { notify } from "./services/notificationService";
+import "./styles/Auth.css"; 
 
 export default function Auth({ onUser }) {
   const [email, setEmail] = useState("");
@@ -70,8 +69,7 @@ export default function Auth({ onUser }) {
         errorMessage = err.message;
       }
       
-      console.error("Error de autenticación:", err);
-      notify.error(errorMessage);
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
