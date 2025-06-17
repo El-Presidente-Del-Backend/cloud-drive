@@ -188,14 +188,27 @@ function Drive({ user, userData }) {
     );
   };
   
+  // Añadir un estado para controlar el estado de compartir
+  const [isSharing, setIsSharing] = useState(false);
+
   const handleShareFile = async (file, email, permission) => {
     try {
+      console.log("Iniciando compartir archivo:", file.id, "con:", email);
+      setIsSharing(true);
+      
       const result = await shareFile(file, email, permission, user);
       notify.success(result.message || SUCCESS_MESSAGES.SHARE);
       return result;
     } catch (error) {
       console.error("Error al compartir archivo:", error);
+<<<<<<< HEAD
+      alert("Error al compartir archivo: " + error.message);
+=======
+      notify.error("Error al compartir archivo", error.message);
+>>>>>>> b2ea820c6ebe1ab549bbe390e8f222ad128ef28c
       throw error;
+    } finally {
+      setIsSharing(false);
     }
   };
   
@@ -378,6 +391,7 @@ function Drive({ user, userData }) {
           file={selectedFileForShare}
           onShare={handleShareFile}
           onClose={closeShareModal}
+          isSubmitting={isSharing}
         />
       )}
       
