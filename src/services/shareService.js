@@ -6,11 +6,10 @@ import {
   where,
   serverTimestamp,
   setDoc,
-  deleteDoc,
-  addDoc,
-  getDoc
+  deleteDoc
 } from "firebase/firestore";
 import { db } from "../firebase";
+<<<<<<< HEAD
 <<<<<<< HEAD
 import { PERMISSION_TYPES, ERROR_MESSAGES } from "../constants/permissions";
 
@@ -27,18 +26,18 @@ export const shareFile = async (file, targetEmail, permission, user, userData) =
     notify.error("Se requiere un correo electrónico y un archivo para compartir");
     throw new Error("Se requiere un correo electrónico y un archivo para compartir");
 >>>>>>> b2ea820c6ebe1ab549bbe390e8f222ad128ef28c
+=======
+
+// Función para compartir un archivo
+export const shareFile = async (file, targetEmail, permission, user, userData) => {
+  if (!targetEmail || !file) {
+    throw new Error("Se requiere un correo electrónico y un archivo para compartir");
+>>>>>>> parent of c14a3ef (Compartir archivo)
   }
   
   try {
-    console.log("Iniciando proceso de compartir archivo:", file.id);
-    
     // Normalizar el email (convertir a minúsculas)
     const normalizedEmail = targetEmail.toLowerCase().trim();
-    
-    // No permitir compartir consigo mismo
-    if (normalizedEmail === user.email.toLowerCase()) {
-      throw new Error(ERROR_MESSAGES.SELF_SHARE);
-    }
     
     // Buscar el usuario por correo electrónico
     const usersRef = collection(db, "users");
@@ -49,30 +48,27 @@ export const shareFile = async (file, targetEmail, permission, user, userData) =
     let targetUserData = {};
     
     if (querySnapshot.empty) {
-      console.log("Usuario no encontrado, creando usuario temporal");
       // Si no encontramos el usuario, creamos uno temporal
-      const userDocRef = doc(db, "users", normalizedEmail.replace(/[.@]/g, "_"));
+      targetUserId = normalizedEmail.replace(/[.@]/g, "_");
       
-      // Verificar si ya existe el documento
-      const userDoc = await getDoc(userDocRef);
+      // Crear documento temporal
+      await setDoc(doc(db, "users", targetUserId), {
+        email: normalizedEmail,
+        name: "",
+        phone: "",
+        createdAt: serverTimestamp(),
+        isTemporary: true
+      });
       
-      if (!userDoc.exists()) {
-        // Crear documento temporal
-        await setDoc(userDocRef, {
-          email: normalizedEmail,
-          name: "",
-          phone: "",
-          createdAt: serverTimestamp(),
-          isTemporary: true
-        });
-      }
-      
-      targetUserId = userDocRef.id;
-      console.log("Usuario temporal creado/encontrado con ID:", targetUserId);
+      console.log("Usuario temporal creado con ID:", targetUserId);
     } else {
       targetUserId = querySnapshot.docs[0].id;
       targetUserData = querySnapshot.docs[0].data();
-      console.log("Usuario existente encontrado con ID:", targetUserId);
+      
+      // No permitir compartir consigo mismo
+      if (targetUserId === user.uid) {
+        throw new Error("No puedes compartir un archivo contigo mismo");
+      }
     }
     
     // Crear un ID único para el documento compartido
@@ -85,15 +81,14 @@ export const shareFile = async (file, targetEmail, permission, user, userData) =
       fileUrl: file.url,
       ownerId: user.uid,
       ownerEmail: user.email,
-      ownerName: user.displayName || "",
-      permission: PERMISSION_TYPES.VIEW, // Siempre usar VIEW
+      ownerName: userData?.name || "",
+      permission: permission,
       sharedAt: serverTimestamp(),
       size: file.size,
       type: file.type,
-      extension: file.name.split('.').pop().toLowerCase()
+      extension: file.extension,
+      createdAt: file.createdAt
     };
-    
-    console.log("Añadiendo a sharedWithMe del usuario destino:", targetUserId);
     
     // Añadir a la subcolección "sharedWithMe" del usuario destino
     await setDoc(
@@ -101,20 +96,16 @@ export const shareFile = async (file, targetEmail, permission, user, userData) =
       sharedFileData
     );
     
-    console.log("Añadiendo a sharedByMe del usuario actual:", user.uid);
-    
     // También mantener un registro en la colección del propietario
     await setDoc(
       doc(db, "users", user.uid, "sharedByMe", sharedId),
       {
         ...sharedFileData,
         targetUserId: targetUserId,
-        recipientEmail: normalizedEmail,
-        recipientName: targetUserData.name || ""
+        targetUserEmail: normalizedEmail,
+        targetUserName: targetUserData.name || ""
       }
     );
-    
-    console.log("Archivo compartido exitosamente");
     
     return {
       success: true,
@@ -130,8 +121,6 @@ export const shareFile = async (file, targetEmail, permission, user, userData) =
 // Función para revocar acceso compartido
 export const revokeAccess = async (sharedFileId, targetUserId, user) => {
   try {
-    console.log("Revocando acceso:", sharedFileId, "para usuario:", targetUserId);
-    
     // Eliminar de la colección "sharedWithMe" del usuario destino
     await deleteDoc(
       doc(db, "users", targetUserId, "sharedWithMe", sharedFileId)

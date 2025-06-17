@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-import { PERMISSION_TYPES } from "../constants/permissions";
-import "../styles/ShareModal.css";
+
+const PERMISSION_TYPES = {
+  VIEW: "view",
+  EDIT: "edit"
+};
 
 const ShareModal = ({ 
   file, 
@@ -8,6 +11,7 @@ const ShareModal = ({
   onClose 
 }) => {
   const [email, setEmail] = useState("");
+  const [permission, setPermission] = useState(PERMISSION_TYPES.VIEW);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
 
@@ -19,12 +23,10 @@ const ShareModal = ({
     setError(null);
     
     try {
-      console.log("Enviando solicitud para compartir archivo");
-      await onShare(file, email, PERMISSION_TYPES.VIEW);
+      await onShare(file, email, permission);
       onClose();
     } catch (err) {
-      console.error("Error en ShareModal:", err);
-      setError(err.message || "Error al compartir archivo");
+      setError(err.message);
     } finally {
       setIsSubmitting(false);
     }
@@ -46,14 +48,18 @@ const ShareModal = ({
               onChange={(e) => setEmail(e.target.value)}
               placeholder="usuario@ejemplo.com"
               required
-              disabled={isSubmitting}
             />
           </div>
           
           <div className="form-group">
-            <p className="permission-info">
-              El archivo se compartirá con permisos de solo lectura.
-            </p>
+            <label>Permisos:</label>
+            <select 
+              value={permission} 
+              onChange={(e) => setPermission(e.target.value)}
+            >
+              <option value={PERMISSION_TYPES.VIEW}>Solo lectura</option>
+              <option value={PERMISSION_TYPES.EDIT}>Editar</option>
+            </select>
           </div>
           
           <div className="modal-buttons">
